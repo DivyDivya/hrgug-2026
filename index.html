@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive schedule for HR Global User Group Conference 2026 (March 11-12) in St. Leon-Rot, Germany. Browse 29 SAP SuccessFactors sessions, view details, and add events to your calendar.">
+    <title>HRGUG 2026 - Event Schedule</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #0070f3;
+    --secondary-color: #ff6b6b;
+    --success-color: #50C878;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666;
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+}
+
+.header-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.event-info {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.room-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.day-section {
+    margin-bottom: 3rem;
+}
+
+.day-title {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Timeline Row - contains time slot + parallel sessions */
+.timeline-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+/* Time Slot Column (left side) */
+.time-slot {
+    min-width: 120px;
+    max-width: 120px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 1rem;
+    align-self: flex-start;
+}
+
+.time-slot-start,
+.time-slot-end {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+}
+
+.time-slot-separator {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Parallel Sessions Container (right side) */
+.parallel-sessions {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+/* Session Card - redesigned for grid layout */
+.timeline-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    border-top: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+    height: fit-content;
+}
+
+.timeline-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.timeline-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.timeline-card:hover::before {
+    transform: scaleX(1);
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.break-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-top-color: #95a5a6 !important;
+    cursor: default;
+    grid-column: 1 / -1; /* Span all columns for breaks */
+}
+
+.break-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.break-card::before {
+    display: none;
+}
+
+/* Finished Session Styles */
+.timeline-card.finished {
+    opacity: 0.5;
+    background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
+    cursor: default;
+}
+
+.timeline-card.finished:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-card.finished::before {
+    display: none;
+}
+
+.timeline-card.finished .session-id {
+    color: #999;
+}
+
+.timeline-card.finished .session-title,
+.timeline-card.finished .session-speaker,
+.timeline-card.finished .session-company {
+    color: #888;
+}
+
+.timeline-card.finished .session-room {
+    opacity: 0.6;
+}
+
+.finished-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #999;
+    color: white;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.break-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.break-location {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.session-id {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.session-room {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: white;
+    font-weight: 600;
+}
+
+.session-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.session-speaker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.speaker-icon {
+    font-size: 1rem;
+}
+
+.session-company {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.session-detail-view {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.back-button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    font-weight: 600;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-5px);
+}
+
+.session-detail-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.session-id-large {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.session-room-large {
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.detail-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.detail-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 12px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+}
+
+.info-content strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-content p {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.detail-description {
+    margin-bottom: 2rem;
+}
+
+.detail-description h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.detail-description p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.add-to-calendar-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto;
+}
+
+.add-to-calendar-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.add-to-calendar-btn:active {
+    transform: translateY(0);
+}
+
+.footer {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+    backdrop-filter: blur(10px);
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-to-top:active {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .header-content h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    /* Stack timeline rows on mobile */
+    .timeline-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .time-slot {
+        min-width: 100%;
+        max-width: 100%;
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .time-slot-separator {
+        margin: 0 0.5rem;
+    }
+
+    /* Single column for parallel sessions on mobile */
+    .parallel-sessions {
+        grid-template-columns: 1fr;
+    }
+
+    .session-detail-card {
+        padding: 1.5rem;
+    }
+
+    .detail-title {
+        font-size: 1.5rem;
+    }
+
+    .detail-info-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    main {
+        padding: 1rem 0.5rem;
+    }
+
+    .day-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .session-title {
+        font-size: 1rem;
+    }
+
+    .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .timeline-time {
+        font-size: 0.9rem;
+    }
+
+    .time-badge {
+        font-size: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <h1>🎯 HRGUG 2026</h1>
+                <p class="subtitle">HR Global User Group Conference</p>
+                <p class="event-info">March 11-12, 2026 | St. Leon-Rot, Germany</p>
+            </div>
+            <div class="room-legend">
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #4A90E2;"></span>
+                    <span>W1+W2</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #E24A4A;"></span>
+                    <span>W3</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #50C878;"></span>
+                    <span>EG - DE.01A</span>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div id="agenda-view" class="agenda-view">
+                <div class="day-section" id="day1-morning"></div>
+                <div class="day-section" id="day1-afternoon"></div>
+                <div class="day-section" id="day2-morning"></div>
+                <div class="day-section" id="day2-afternoon"></div>
+            </div>
+
+            <div id="session-detail-view" class="session-detail-view" style="display: none;">
+                <button class="back-button" onclick="showAgenda()">← Back to Agenda</button>
+                <div id="session-detail-content"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 HRGUG - SAP and Customers Only</p>
+        </footer>
+
+        <button id="scroll-to-top" class="scroll-to-top" title="Back to top">↑</button>
+    </div>
+
+    <script>
+// Session data
+const sessionsData = {"M0":{"id":"M0","title":"Kick-Off and Agenda","speaker":"Joachim Foerderer & Sarah Nehring","company":"HRGUG","room":"W1+W2","date":"2026-03-11","timeFrom":"09:00","timeTo":"09:10","description":"Opening session and conference agenda overview"},"M1":{"id":"M1","title":"Product Highlights #1: SAP SuccessFactors Roadmap and Vision","speaker":"Bianka Woelke","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"09:10","timeTo":"09:55","description":"SAP SuccessFactors Roadmap and Vision"},"M2":{"id":"M2","title":"HR Transformation @ Dekra","speaker":"Verena Zais","company":"Dekra","room":"W1+W2","date":"2026-03-11","timeFrom":"09:55","timeTo":"10:35","description":"Insights into HR Transformation at Dekra"},"BREAK1":{"id":"BREAK1","title":"☕ Coffee Break","speaker":"","company":"","room":"All Areas","date":"2026-03-11","timeFrom":"10:35","timeTo":"10:50","description":"Coffee and networking break","isBreak":true},"M3":{"id":"M3","title":"Product Highlights #2: SuccessFactors Employee Central Core - Roadmap","speaker":"Tanja Bäck","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"10:50","timeTo":"11:35","description":"Explore the future vision and roadmap for SAP SuccessFactors Employee Central. Learn how upcoming innovations will boost HR productivity by empowering employees and managers and by optimizing and automating HR admin processes."},"M4":{"id":"M4","title":"Bosch's Journey Towards Implementing Employee Central in an Existing HCM and SuccessFactors Landscape","speaker":"Sebastian May & Alexander Schatz","company":"Bosch","room":"W1+W2","date":"2026-03-11","timeFrom":"11:30","timeTo":"12:15","description":"Bosch's Journey Toward Implementing Employee Central in an Existing HCM and SuccessFactors Landscape"},"M5":{"id":"M5","title":"Product Highlights #3: Getting started with SmartRecruiters: a Product demo & Roadmap","speaker":"Heiner-Martin Wacks","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"12:15","timeTo":"13:15","description":"Are you new to the SmartRecruiters ecosystem or considering how it fits within your HR landscape? This session offers a high-level walkthrough of the SmartOS platform and Winston. We'll cover the \"Success Pillars\" of the product: Attendees will see a live demo of core functionalities including core functionality, the AI-powered Winston assistant, and integrated analytics. The session concludes with an open Q&A to address foundational questions and best practices for new users."},"LUNCH1":{"id":"LUNCH1","title":"🍽️ Lunch","speaker":"","company":"","room":"All Areas","date":"2026-03-11","timeFrom":"13:15","timeTo":"14:30","description":"Lunch break","isBreak":true},"M6":{"id":"M6","title":"Workforce Management: Roadmap and Vision","speaker":"Stephanie Rhein","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"14:30","timeTo":"15:10","description":"Explore the future vision and roadmap for SAP SuccessFactors Workforce Management, covering absence management, time and attendance, workforce scheduling, and activity management. Learn how upcoming innovations will streamline leave processes, enhance productivity and compliance, optimize workforce scheduling, and enable activity-based time recording to improve operational efficiency and the employee experience."},"M7":{"id":"M7","title":"H4S4 - News and Roadmap of the S/4 HANA 2025 release","speaker":"Nicole Schwalm & Michael Fruechtl","company":"SAP","room":"W3","date":"2026-03-11","timeFrom":"14:30","timeTo":"15:10","description":"Find out about the latest development in S/4 HANA HCM Private Cloud release 2025"},"M8":{"id":"M8","title":"Unlocking Business Impact with AI Agents in SAP SuccessFactors","speaker":"Gerald Reinhard","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"15:15","timeTo":"15:55","description":"Join us for an interactive customer session focused on exploring how AI Agents can transform SAP SuccessFactors HR Core. We'll start with the Data Quality Agent as a practical example and then broaden the discussion to identify additional high-impact use cases. The goal is to understand your biggest HR challenges, uncover opportunities where agentic AI can deliver measurable business value, and co-create ideas that drive efficiency, compliance, and employee experience. Your feedback will help shape the next generation of intelligent HR solutions."},"M9":{"id":"M9","title":"From Employee to Executive: Mastering Employee Attachments for Every Stakeholder","speaker":"Sylvia Strangfeld","company":"SAP","room":"W3","date":"2026-03-11","timeFrom":"15:15","timeTo":"15:55","description":"Join us for an exclusive lab preview of our upcoming new digital Employee Attachment solution, developed directly from customer requests in our Customer Influence Tool. Currently, only IT administrators have access to attachments using the \"Manage Documents\" functionality that comes with very limited permission configuration options. The new foundational Employee Attachment functionality will provide the ability to list and filter all relevant personnel attachments for each employee, leveraging your existing permission structure and focusing on the specific document areas you define for different user roles. We'll demonstrate how our approach integrates into the new People Profile, creating an intuitive user experience that serves employees, managers, and HR professionals alike. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution."},"M10":{"id":"M10","title":"The Future of Talent Engagement: Co-Designing \"Agentic Candidate Relationship Management\"","speaker":"Heiner-Martin Wacks","company":"SAP","room":"EG - DE.01A","date":"2026-03-11","timeFrom":"15:15","timeTo":"15:55","description":"SmartRecruiters is currently in discovery for the next generation of Candidate Relationship Management: Agentic CRM. Moving beyond static talent pools, \"agentic\" technology will use autonomous AI agents to proactively nurture, score, and move candidates through the funnel with minimal manual intervention. In this interactive session, our product team will share a first-look prototype of our agentic workflows. We are eager to hear first-hand, your \"voice of the customer\" feedback."},"M11":{"id":"M11","title":"HCM Customer Evolution: Latest tools, assets, services and timelines for Core HR, Payroll and Time customers","speaker":"Steve Schnoll, Wim Valstar, Duncan Scott","company":"SAP","room":"W1+W2","date":"2026-03-11","timeFrom":"16:00","timeTo":"16:40","description":"Learn about the latest tools, assets, services and deadlines for modernizing HCM, including: SAP Readiness Check for SAP SuccessFactors HCM, SAP HCM Migration Guide for HRIT Leaders (EvoGuide), SAP Migration tools and accelerators, HCM Evolution Kit Workshops, HCM Maintenance Timelines (also covers Payroll and Time solutions, in addition to Core HR listed in prior column)"},"M12":{"id":"M12","title":"People Intelligence in SAP BDC","speaker":"Nausheen Minaz Abdul Hameed","company":"SAP","room":"W3","date":"2026-03-11","timeFrom":"16:00","timeTo":"16:40","description":"Roadmap, Delivered Data Products and Intelligent Apps, Demo the end to end flow, etc"},"M13":{"id":"M13","title":"Workforce Scheduling Innovation Roundtable: Shaping the Future Together","speaker":"Gayathri Raghu Raman","company":"SAP","room":"EG - DE.01A","date":"2026-03-11","timeFrom":"16:00","timeTo":"16:40","description":"An interactive customer discussion focused on emerging workforce scheduling challenges in producings industries and the future direction of SAP SuccessFactors Workforce Scheduling, featuring peer exchange, early insights, and direct dialogue with SAP product leaders."},"QA1":{"id":"QA1","title":"💬 Q&A with Product Leadership","speaker":"","company":"","room":"All Areas","date":"2026-03-11","timeFrom":"16:45","timeTo":"17:30","description":"Q&A session with product leadership","isBreak":true},"SOCIAL1":{"id":"SOCIAL1","title":"🛍️ Marketplace and Happy Hour","speaker":"","company":"","room":"All Areas","date":"2026-03-11","timeFrom":"17:30","timeTo":"19:00","description":"Marketplace and Happy Hour - networking and exhibits","isBreak":true},"DINNER1":{"id":"DINNER1","title":"🍴 Dinner in Rot03 Canteen","speaker":"","company":"","room":"Rot03 Canteen","date":"2026-03-11","timeFrom":"19:00","timeTo":"22:00","description":"Conference dinner","isBreak":true},"D1":{"id":"D1","title":"Product highlight #4: SAP SuccessFactors Career and Talent Development: Build a future-ready workforce - Roadmap & Vision","speaker":"Martina Willam","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"08:15","timeTo":"09:00","description":"Learn about our product vision and strategy for building a future-ready workforce with SAP SuccessFactors Career and Talent Development. Discover how AI-driven innovations enhance upskilling, personalized career development and skill-based talent planning to fuel people and organizational growth and agility."},"D2":{"id":"D2","title":"SuccessFactors Skill Management with Talent Intelligence Hub @ BASF","speaker":"Andrea Schulz","company":"BASF","room":"W1+W2","date":"2026-03-12","timeFrom":"09:00","timeTo":"09:45","description":"SuccessFactors Skill Management with Talent Intelligence Hub at BASF"},"BREAK2":{"id":"BREAK2","title":"☕ Coffee Break","speaker":"","company":"","room":"All Areas","date":"2026-03-12","timeFrom":"09:45","timeTo":"10:00","description":"Coffee and networking break","isBreak":true},"D3":{"id":"D3","title":"Product Highlights #5: Payroll Roadmap","speaker":"Judith Hochwarth","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"10:00","timeTo":"10:45","description":"Roadmap of Employee Central Payroll (including Private Cloud Edition)"},"MARKETPLACE2":{"id":"MARKETPLACE2","title":"🛍️ Marketplace","speaker":"","company":"","room":"Marketplace Area","date":"2026-03-12","timeFrom":"10:00","timeTo":"12:00","description":"Visit exhibitor booths and network with partners","isBreak":true},"D4":{"id":"D4","title":"ECP @ Clariant","speaker":"Jens Gehlen","company":"Clariant","room":"W1+W2","date":"2026-03-12","timeFrom":"10:45","timeTo":"11:30","description":"Insights into Employee Central Pay experience at Clariant"},"D5":{"id":"D5","title":"Product highlight #6: SAP SuccessFactors AI Roadmap session","speaker":"Gerald Reinhard","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"11:30","timeTo":"12:15","description":"SAP SuccessFactors AI Roadmap"},"D6":{"id":"D6","title":"Extensibility Scenarios with Extensibility Wizard and SAP BTP","speaker":"Peter Stock","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"12:20","timeTo":"13:00","description":"Learn about extensibility capabilities provided for your SuccessFactors solution in conjunction with SAP Build Extensibility Wizard and SAP BTP. Three scenarios enabled by the Extensibility Wizard will be covered: 1) In-App Field Extensibility in EC and MDF, 2) Side-by-Side Process Extensibility in Onboarding, 3) Latest People Profile Extensibility with UI integration cards extending people profile with data from SAP BTP-based applications"},"D7":{"id":"D7","title":"Globalization: Recent & upcoming Roadmap / Teaser Parenthood","speaker":"Shruti Shukla & Torsten Nagel","company":"SAP","room":"W3","date":"2026-03-12","timeFrom":"12:20","timeTo":"13:00","description":"Get a fast-paced look at the top 2025 innovations—from the new §3B feature and transparent payroll experiences to smarter enrollment for allowances and reimbursements. We'll also give you a first glimpse into the 2026 roadmap, including reverse absence replication for Germany, automatic holiday generation, enhanced BDC reporting, and new parenthood capabilities. This session is perfect for experts who want to stay ahead of the latest and upcoming developments."},"LUNCH2":{"id":"LUNCH2","title":"🍽️ Lunch","speaker":"","company":"","room":"All Areas","date":"2026-03-12","timeFrom":"13:00","timeTo":"14:00","description":"Lunch break","isBreak":true},"D8":{"id":"D8","title":"The future of Succession Planning - Roadmap and Vision for AI-driven Talent Planning","speaker":"Beibei Hu","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"14:00","timeTo":"14:40","description":"Discover how AI is redefining the future of talent planning. This session highlights how the Succession Agent strengthens leadership pipelines through continuous health diagnostics and targeted strategic recommendations, while the Talent Scout Agent uses conversational AI to instantly surface the right talent—matching candidates to roles, successors, talent pools, and experts with transparent, data-driven insights. Together, these AI agents empower organizations to make faster, smarter, and more confident talent decisions."},"D9":{"id":"D9","title":"Building Autonomous Payroll: Cutting cost in Payroll with Payroll Agents","speaker":"Pepijn Visser, Michael Wulf","company":"SAP","room":"W3","date":"2026-03-12","timeFrom":"14:00","timeTo":"14:40","description":"AI has been around for a long time but not always the high expectations are met. In this session we demonstrate how Payroll Agents in EC Payroll cut costs in your organization. We look at a concrete customer example and also look into the roadmap of Payroll Agents for EC Payroll."},"D10":{"id":"D10","title":"Talent Intelligence Hub: Accelerating your skills journey","speaker":"Sharath Sundar, Amelie Fidric","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"14:45","timeTo":"15:25","description":"Are you planning to implement Talent Intelligence Hub? Are you in the process of creating or updating your job architecture? This session will give you practical tips on getting started. We'll discuss various implementation scenarios and governance best practices."},"D11":{"id":"D11","title":"From Tedious to Transformative: Reimagining Admin Experiences with AI","speaker":"Hariprasad Gudivada","company":"SAP","room":"W3","date":"2026-03-12","timeFrom":"14:45","timeTo":"15:25","description":"Discover how AI is revolutionizing administrative workflows, transforming time-consuming manual tasks into intelligent, automated experiences that empower your team to focus on strategic work that drives business value."},"D12":{"id":"D12","title":"Globalization: Parenthood Roundtable - Together we shape what's next","speaker":"Shruti Shukla & Torsten Nagel","company":"SAP","room":"EG - DE.01A","date":"2026-03-12","timeFrom":"14:45","timeTo":"15:25","description":"Bring in your ideas and help us shape what's next. An interactive round table discussion focused on how organizations can deliver a seamless, compliant, and supportive parenthood experience—covering maternity, paternity, and parental leave—across the full SAP landscape. In this session, we present the future vision of the end-to-end process from Employee Central (EC) through to Employee Central Payroll (ECP), including absence management, document workflows, payroll impacts and country-specific considerations."},"D13":{"id":"D13","title":"Talent Intelligence Hub: From Skill Governance to Value Realization","speaker":"Sharath Sundar, Amelie Fidric","company":"SAP","room":"W1+W2","date":"2026-03-12","timeFrom":"15:30","timeTo":"16:10","description":"This session shows how a centralized Talent Intelligence Hub turns governed skills data into measurable business value. We'll explain a pragmatic governance framework for defining, standardizing, and maintaining skill taxonomies; the data and integration foundations needed to create a single source of truth; and the analytics and workflows that translate that foundation into better hiring, internal mobility, learning investments, and workforce planning. Attendees will see concrete examples and a practical roadmap: establishing governance roles and policies, mapping skills to roles and career paths, instrumenting data quality and building value-focused dashboards and use cases."},"D14":{"id":"D14","title":"Event Driven Integration: Roadmap and Vision","speaker":"Aditya Singh Kushwah","company":"SAP","room":"W3","date":"2026-03-12","timeFrom":"15:30","timeTo":"16:10","description":"Learn about our product vision and strategy for building event driven integrations between SAP SuccessFactors with SAP and Third Party Applications. Discover innovations in Integration area and event transfer capabilities. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution."},"CLOSING":{"id":"CLOSING","title":"🎯 Wrap up and closing","speaker":"","company":"","room":"W1+W2","date":"2026-03-12","timeFrom":"16:15","timeTo":"16:30","description":"Conference wrap up and closing remarks","isBreak":true}};
+
+// Helper function to check if a session has finished (using CET timezone)
+function isSessionFinished(session) {
+    // Get current time in CET (UTC+1 standard, UTC+2 during DST)
+    const now = new Date();
+
+    // Create a date object for the session end time in CET
+    // Format: "2026-03-11" + "T" + "09:10" + ":00"
+    const sessionEndString = `${session.date}T${session.timeTo}:00`;
+
+    // Parse the session end time and treat it as CET
+    // We'll create the date and then adjust for CET timezone
+    const sessionEnd = new Date(sessionEndString);
+
+    // Get current time in CET by using toLocaleString
+    const cetTimeString = now.toLocaleString('en-US', {
+        timeZone: 'Europe/Berlin',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+
+    // Parse the CET time string to create a proper Date object
+    const [datePart, timePart] = cetTimeString.split(', ');
+    const [month, day, year] = datePart.split('/');
+    const cetNow = new Date(`${year}-${month}-${day}T${timePart}`);
+
+    // Compare: if current CET time is after session end time, session is finished
+    return cetNow > sessionEnd;
+}
+
+// Helper function to generate .ics file content
+function generateICS(session) {
+    const startDateTime = `${session.date.replace(/-/g, '')}T${session.timeFrom.replace(':', '')}00`;
+    const endDateTime = `${session.date.replace(/-/g, '')}T${session.timeTo.replace(':', '')}00`;
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HRGUG 2026//Event Schedule//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTART:${startDateTime}
+DTEND:${endDateTime}
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+UID:${session.id}-hrgug2026@event.com
+SUMMARY:${session.title}
+DESCRIPTION:${session.description}\\n\\nSpeaker: ${session.speaker}\\nCompany: ${session.company}
+LOCATION:Room ${session.room}, St. Leon-Rot, Germany
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder: ${session.title} starts in 15 minutes
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+    return icsContent;
+}
+
+function downloadICS(session) {
+    const icsContent = generateICS(session);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `HRGUG2026-${session.id}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function getRoomColor(room) {
+    const colors = {
+        'W1+W2': '#4A90E2',
+        'W3': '#E24A4A',
+        'EG - DE.01A': '#50C878'
+    };
+    return colors[room] || '#999999';
+}
+
+function showSessionDetail(session) {
+    const detailView = document.getElementById('session-detail-view');
+    const detailContent = document.getElementById('session-detail-content');
+    const agendaView = document.getElementById('agenda-view');
+
+    detailContent.innerHTML = `
+        <div class="session-detail-card">
+            <div class="detail-header">
+                <span class="session-id-large">${session.id}</span>
+                <span class="session-room-large" style="background-color: ${getRoomColor(session.room)}">
+                    📍 Room ${session.room}
+                </span>
+            </div>
+            <h1 class="detail-title">${session.title}</h1>
+            <div class="detail-info-grid">
+                <div class="info-item">
+                    <span class="info-icon">🕒</span>
+                    <div class="info-content">
+                        <strong>Time</strong>
+                        <p>${formatDate(session.date)}</p>
+                        <p>${session.timeFrom} - ${session.timeTo}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">👤</span>
+                    <div class="info-content">
+                        <strong>Speaker</strong>
+                        <p>${session.speaker}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🏢</span>
+                    <div class="info-content">
+                        <strong>Company</strong>
+                        <p>${session.company}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-description">
+                <h2>Session Description</h2>
+                <p>${session.description}</p>
+            </div>
+            <button class="add-to-calendar-btn" onclick="downloadICS(sessionsData['${session.id}'])">
+                📅 Add to Calendar (.ics)
+            </button>
+        </div>
+    `;
+    agendaView.style.display = 'none';
+    detailView.style.display = 'block';
+    window.scrollTo(0, 0);
+}
+
+function showAgenda() {
+    const detailView = document.getElementById('session-detail-view');
+    const agendaView = document.getElementById('agenda-view');
+    detailView.style.display = 'none';
+    agendaView.style.display = 'block';
+    window.scrollTo(0, 0);
+}
+
+function formatDate(dateString) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+function createSessionCard(session) {
+    const card = document.createElement('div');
+    const finished = !session.isBreak && isSessionFinished(session);
+
+    // Set base class
+    if (session.isBreak) {
+        card.className = 'timeline-card break-card';
+    } else if (finished) {
+        card.className = 'timeline-card finished';
+    } else {
+        card.className = 'timeline-card';
+    }
+
+    if (!session.isBreak) {
+        card.style.borderTopColor = getRoomColor(session.room);
+    }
+
+    if (session.isBreak) {
+        card.innerHTML = `
+            <h3 class="break-title">${session.title}</h3>
+            <div class="break-location">📍 ${session.room}</div>
+        `;
+    } else {
+        const finishedBadge = finished ? '<span class="finished-badge">✓ Finished</span>' : '';
+        card.innerHTML = `
+            <div class="session-header">
+                <span class="session-id">${session.id}${finishedBadge}</span>
+                <span class="session-room" style="background-color: ${getRoomColor(session.room)}">${session.room}</span>
+            </div>
+            <h3 class="session-title">${session.title}</h3>
+            <div class="session-speaker">
+                <span class="speaker-icon">👤</span>
+                ${session.speaker}
+            </div>
+            <div class="session-company">${session.company}</div>
+        `;
+        // Only allow clicking on non-finished sessions
+        if (!finished) {
+            card.addEventListener('click', () => showSessionDetail(session));
+        }
+    }
+    return card;
+}
+
+// Group sessions by time slot
+function groupSessionsByTime(sessions) {
+    const grouped = {};
+    sessions.forEach(session => {
+        const timeKey = `${session.timeFrom}-${session.timeTo}`;
+        if (!grouped[timeKey]) {
+            grouped[timeKey] = [];
+        }
+        grouped[timeKey].push(session);
+    });
+    return grouped;
+}
+
+// Create a timeline row with time slot and parallel sessions
+function createTimelineRow(timeKey, sessions) {
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+
+    // Create time slot (left side)
+    const [timeFrom, timeTo] = timeKey.split('-');
+    const timeSlot = document.createElement('div');
+    timeSlot.className = 'time-slot';
+    timeSlot.innerHTML = `
+        <div class="time-slot-start">${timeFrom}</div>
+        <div class="time-slot-separator">→</div>
+        <div class="time-slot-end">${timeTo}</div>
+    `;
+
+    // Create parallel sessions container (right side)
+    const parallelContainer = document.createElement('div');
+    parallelContainer.className = 'parallel-sessions';
+
+    // Add all sessions for this time slot
+    sessions.forEach(session => {
+        parallelContainer.appendChild(createSessionCard(session));
+    });
+
+    row.appendChild(timeSlot);
+    row.appendChild(parallelContainer);
+    return row;
+}
+
+function populateAgenda() {
+    const day1Morning = document.getElementById('day1-morning');
+    const day1Afternoon = document.getElementById('day1-afternoon');
+    const day2Morning = document.getElementById('day2-morning');
+    const day2Afternoon = document.getElementById('day2-afternoon');
+
+    const allSessions = Object.values(sessionsData);
+
+    // Filter sessions for each section
+    const day1MorningSessions = allSessions.filter(s => s.date === '2026-03-11' && s.timeFrom < '13:00');
+    const day1AfternoonSessions = allSessions.filter(s => s.date === '2026-03-11' && s.timeFrom >= '13:00');
+    const day2MorningSessions = allSessions.filter(s => s.date === '2026-03-12' && s.timeFrom < '13:00');
+    const day2AfternoonSessions = allSessions.filter(s => s.date === '2026-03-12' && s.timeFrom >= '13:00');
+
+    // Group by time and create timeline rows
+    function populateSection(container, sessions, title) {
+        container.innerHTML = `<h2 class="day-title">${title}</h2><div class="timeline-container"></div>`;
+        const timelineContainer = container.querySelector('.timeline-container');
+        const grouped = groupSessionsByTime(sessions);
+
+        // Sort by time and add rows
+        Object.keys(grouped)
+            .sort((a, b) => a.localeCompare(b))
+            .forEach(timeKey => {
+                timelineContainer.appendChild(createTimelineRow(timeKey, grouped[timeKey]));
+            });
+    }
+
+    populateSection(day1Morning, day1MorningSessions, '📆 Wednesday, March 11 - Morning');
+    populateSection(day1Afternoon, day1AfternoonSessions, '📆 Wednesday, March 11 - Afternoon');
+    populateSection(day2Morning, day2MorningSessions, '📆 Thursday, March 12 - Morning');
+    populateSection(day2Afternoon, day2AfternoonSessions, '📆 Thursday, March 12 - Afternoon');
+}
+
+function initScrollToTop() {
+    const scrollBtn = document.getElementById('scroll-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollBtn.classList.add('visible');
+        } else {
+            scrollBtn.classList.remove('visible');
+        }
+    });
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateAgenda();
+    initScrollToTop();
+});
+    </script>
+</body>
+</html>
