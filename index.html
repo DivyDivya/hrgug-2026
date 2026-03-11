@@ -856,30 +856,35 @@ main {
     position: absolute;
     bottom: 1rem;
     right: 1rem;
-    width: 60px;
-    height: 70px;
+    width: 65px;
+    height: 75px;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 112, 242, 0.3);
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--sap-blue);
 }
 
 .calendar-thumbnail:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 112, 242, 0.4);
+    border-color: var(--sap-gold);
 }
 
 .calendar-thumbnail-header {
     background: linear-gradient(135deg, var(--sap-blue) 0%, var(--sap-blue-dark) 100%);
     color: white;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-align: center;
-    padding: 0.25rem;
+    padding: 0.3rem;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
 }
 
 .calendar-thumbnail-body {
@@ -887,13 +892,14 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 0.25rem;
+    padding: 0.4rem 0.25rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
 }
 
 .calendar-thumbnail-date {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--sap-blue);
     line-height: 1;
 }
 
@@ -909,7 +915,8 @@ main {
     top: 3px;
     right: 3px;
     font-size: 0.9rem;
-    opacity: 0.7;
+    opacity: 1;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
 }
 
 /* Large calendar preview in detail view */
@@ -1466,16 +1473,21 @@ body.kiosk-mode .timeline-card {
     .calendar-thumbnail {
         bottom: 0.75rem;
         right: 0.75rem;
-        width: 55px;
-        height: 65px;
+        width: 58px;
+        height: 68px;
     }
 
     .calendar-thumbnail-date {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .calendar-thumbnail-time {
         font-size: 0.6rem;
+    }
+
+    .calendar-thumbnail-header {
+        font-size: 0.6rem;
+        padding: 0.25rem;
     }
 
     .card-header {
@@ -2117,7 +2129,6 @@ function getCalendarThumbnail(session, large = false) {
             <div class="calendar-thumbnail-header">${month}</div>
             <div class="calendar-thumbnail-body">
                 <div class="calendar-thumbnail-date">${day}</div>
-                <div class="calendar-thumbnail-time">${session.timeFrom}</div>
             </div>
         </div>
     `;
