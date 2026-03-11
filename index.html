@@ -598,9 +598,6 @@ main {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    position: sticky;
-    top: 1rem;
-    align-self: flex-start;
 }
 
 .time-slot.happening-now {
@@ -639,6 +636,7 @@ main {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1rem;
+    align-items: stretch;
 }
 
 .timeline-card {
@@ -651,7 +649,8 @@ main {
     border-top: 4px solid var(--primary-color);
     position: relative;
     overflow: hidden;
-    height: fit-content;
+    display: flex;
+    flex-direction: column;
 }
 
 .timeline-card::before {
@@ -1459,6 +1458,39 @@ body.kiosk-mode .timeline-card {
     .add-to-calendar-btn, .share-btn {
         width: 100%;
     }
+
+    .timeline-card {
+        padding-bottom: 5rem;
+    }
+
+    .calendar-thumbnail {
+        bottom: 0.75rem;
+        right: 0.75rem;
+        width: 55px;
+        height: 65px;
+    }
+
+    .calendar-thumbnail-date {
+        font-size: 1.3rem;
+    }
+
+    .calendar-thumbnail-time {
+        font-size: 0.6rem;
+    }
+
+    .card-header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .room-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .session-meta {
+        padding-right: 60px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1488,6 +1520,36 @@ body.kiosk-mode .timeline-card {
     .action-btn {
         font-size: 0.85rem;
         padding: 0.5rem 1rem;
+    }
+
+    .scroll-to-top {
+        width: 40px;
+        height: 40px;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .calendar-thumbnail {
+        width: 50px;
+        height: 60px;
+    }
+
+    .calendar-thumbnail-header {
+        font-size: 0.55rem;
+        padding: 0.2rem;
+    }
+
+    .calendar-thumbnail-date {
+        font-size: 1.1rem;
+    }
+
+    .calendar-thumbnail-time {
+        display: none;
+    }
+
+    .timeline-card {
+        padding-bottom: 4.5rem;
     }
 }
     </style>
@@ -1628,7 +1690,7 @@ const sessionsData = {
     "M0": { "id": "M0", "title": "Kick-Off and Agenda", "speaker": "Joachim Foerderer & Sarah Nehring", "company": "HRGUG", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:00", "timeTo": "09:10", "description": "Opening session and conference agenda overview", "type": "keynote" },
     "M1": { "id": "M1", "title": "Product Highlights #1: SAP SuccessFactors Roadmap and Vision", "speaker": "Bianka Woelke", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:10", "timeTo": "09:55", "description": "SAP SuccessFactors Roadmap and Vision", "type": "roadmap" },
     "M2": { "id": "M2", "title": "HR Transformation @ Dekra", "speaker": "Verena Zais", "company": "Dekra", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:55", "timeTo": "10:35", "description": "Insights into HR Transformation at Dekra", "type": "customer-story" },
-    "BREAK1": { "id": "BREAK1", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-11", "timeFrom": "10:35", "timeTo": "10:50", "description": "Coffee and networking break", "isBreak": true },
+    "BREAK1": { "id": "BREAK1", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "1st Floor Lobby Area", "date": "2026-03-11", "timeFrom": "10:35", "timeTo": "10:50", "description": "Coffee and networking break", "isBreak": true },
     "M3": { "id": "M3", "title": "Product Highlights #2: SuccessFactors Employee Central Core - Roadmap", "speaker": "Tanja Bäck", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "10:50", "timeTo": "11:35", "description": "Explore the future vision and roadmap for SAP SuccessFactors Employee Central. Learn how upcoming innovations will boost HR productivity by empowering employees and managers and by optimizing and automating HR admin processes.", "type": "roadmap" },
     "M4": { "id": "M4", "title": "Bosch's Journey Towards Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "speaker": "Sebastian May & Alexander Schatz", "company": "Bosch", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "11:30", "timeTo": "12:15", "description": "Bosch's Journey Toward Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "type": "customer-story" },
     "M5": { "id": "M5", "title": "Product Highlights #3: Getting started with SmartRecruiters: a Product demo & Roadmap", "speaker": "Heiner-Martin Wacks", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "12:15", "timeTo": "13:15", "description": "Are you new to the SmartRecruiters ecosystem or considering how it fits within your HR landscape? This session offers a high-level walkthrough of the SmartOS platform and Winston. We'll cover the \"Success Pillars\" of the product: Attendees will see a live demo of core functionalities including core functionality, the AI-powered Winston assistant, and integrated analytics. The session concludes with an open Q&A to address foundational questions and best practices for new users.", "type": "roadmap" },
@@ -1646,7 +1708,7 @@ const sessionsData = {
     "DINNER1": { "id": "DINNER1", "title": "🍴 Dinner in Rot03 Canteen", "speaker": "", "company": "", "room": "Rot03 Canteen", "date": "2026-03-11", "timeFrom": "19:00", "timeTo": "22:00", "description": "Conference dinner", "isBreak": true },
     "D1": { "id": "D1", "title": "Product highlight #4: SAP SuccessFactors Career and Talent Development: Build a future-ready workforce - Roadmap & Vision", "speaker": "Martina Willam", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "08:15", "timeTo": "09:00", "description": "Learn about our product vision and strategy for building a future-ready workforce with SAP SuccessFactors Career and Talent Development. Discover how AI-driven innovations enhance upskilling, personalized career development and skill-based talent planning to fuel people and organizational growth and agility.", "type": "roadmap" },
     "D2": { "id": "D2", "title": "SuccessFactors Skill Management with Talent Intelligence Hub @ BASF", "speaker": "Andrea Schulz", "company": "BASF", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "09:00", "timeTo": "09:45", "description": "SuccessFactors Skill Management with Talent Intelligence Hub at BASF", "type": "customer-story" },
-    "BREAK2": { "id": "BREAK2", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-12", "timeFrom": "09:45", "timeTo": "10:00", "description": "Coffee and networking break", "isBreak": true },
+    "BREAK2": { "id": "BREAK2", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "1st Floor Lobby Area", "date": "2026-03-12", "timeFrom": "09:45", "timeTo": "10:00", "description": "Coffee and networking break", "isBreak": true },
     "D3": { "id": "D3", "title": "Product Highlights #5: Payroll Roadmap", "speaker": "Judith Hochwarth", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:00", "timeTo": "10:45", "description": "Roadmap of Employee Central Payroll (including Private Cloud Edition)", "type": "roadmap" },
     "MARKETPLACE2": { "id": "MARKETPLACE2", "title": "🛍️ Marketplace", "speaker": "", "company": "", "room": "Marketplace Area", "date": "2026-03-12", "timeFrom": "10:00", "timeTo": "12:00", "description": "Visit exhibitor booths and network with partners", "isBreak": true },
     "D4": { "id": "D4", "title": "ECP @ Clariant", "speaker": "Jens Gehlen", "company": "Clariant", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:45", "timeTo": "11:30", "description": "Insights into Employee Central Pay experience at Clariant", "type": "customer-story" },
@@ -2194,7 +2256,7 @@ function createTimelineRow(timeKey, sessions) {
 
     timeSlot.innerHTML = `
         <div class="time-slot-start">${timeFrom}</div>
-        <div class="time-slot-separator">→</div>
+        <div class="time-slot-separator">–</div>
         <div class="time-slot-end">${timeTo}</div>
         ${countdown ? `<div class="countdown-timer">${countdown}</div>` : ''}
     `;
