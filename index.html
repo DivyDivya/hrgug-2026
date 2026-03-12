@@ -98,7 +98,7 @@ body {
 }
 
 .search-filter-row {
-    display: flex;
+    display: none; /* Hidden - search and filter disabled */
     gap: 1rem;
     align-items: center;
     margin-bottom: 1rem;
@@ -107,6 +107,7 @@ body {
 .search-box {
     flex: 1;
     position: relative;
+    display: none; /* Hidden */
 }
 
 .search-box input {
@@ -995,6 +996,7 @@ main {
     transition: all 0.3s ease;
     padding: 0.25rem;
     line-height: 1;
+    display: none; /* Hidden - My Agenda feature disabled */
 }
 
 .favorite-btn:hover {
@@ -1296,78 +1298,6 @@ main {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Kiosk Mode Styles */
-body.kiosk-mode .header {
-    padding: 1rem;
-}
-
-body.kiosk-mode .control-bar {
-    display: none;
-}
-
-body.kiosk-mode .room-legend {
-    margin-top: 0.5rem;
-}
-
-body.kiosk-mode .header-content h1 {
-    font-size: 2rem;
-}
-
-body.kiosk-mode .subtitle,
-body.kiosk-mode .event-info {
-    font-size: 0.9rem;
-}
-
-body.kiosk-mode .footer {
-    display: none;
-}
-
-body.kiosk-mode .scroll-to-top {
-    display: none;
-}
-
-body.kiosk-mode .favorite-btn {
-    display: none;
-}
-
-body.kiosk-mode .calendar-thumbnail {
-    display: none;
-}
-
-body.kiosk-mode main {
-    padding: 1rem;
-}
-
-body.kiosk-mode .day-title {
-    font-size: 1.4rem;
-    padding: 0.75rem;
-}
-
-body.kiosk-mode .timeline-card {
-    padding: 1rem;
-    padding-bottom: 1rem;
-}
-
-.kiosk-exit-btn {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    background: var(--sap-gold);
-    color: var(--sap-dark-blue-deep);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: var(--shadow-md);
-    transition: all 0.3s ease;
-}
-
-.kiosk-exit-btn:hover {
-    transform: scale(1.05);
-}
-
 /* Print Styles */
 @media print {
     body {
@@ -1586,6 +1516,11 @@ body.kiosk-mode .timeline-card {
                 <h1>HRGUG 2026</h1>
                 <p class="subtitle">HR Global User Group Conference</p>
                 <p class="event-info">March 11-12, 2026 | St. Leon-Rot, Germany</p>
+                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(240, 171, 0, 0.15); border-radius: 8px; border: 2px solid var(--sap-gold);">
+                    <p style="font-size: 1.2rem; font-weight: 600; color: var(--sap-gold); margin: 0;">
+                        🎉 Thank you for attending HRGUG 2026! See you next year! 🎉
+                    </p>
+                </div>
             </div>
 
             <!-- Control Bar -->
@@ -1610,11 +1545,9 @@ body.kiosk-mode .timeline-card {
                     <div class="view-toggle-group">
                         <button class="view-toggle-btn active" id="btn-current" onclick="setView('current')">⏰ Current & Upcoming</button>
                         <button class="view-toggle-btn" id="btn-all" onclick="setView('all')">📋 All Sessions</button>
-                        <button class="view-toggle-btn" id="btn-favorites" onclick="setView('favorites')">⭐ My Agenda (<span id="favorites-count">0</span>)</button>
                     </div>
                     <div class="actions-group">
                         <button class="action-btn" onclick="exportAllToCalendar()">📅 Export All</button>
-                        <button class="action-btn" id="kiosk-btn" onclick="toggleKioskMode()">🖥️ Kiosk Mode</button>
                     </div>
                 </div>
             </div>
@@ -1714,41 +1647,41 @@ body.kiosk-mode .timeline-card {
 // SESSION DATA with Types
 // ============================================
 const sessionsData = {
-    "M0": { "id": "M0", "title": "Kick-Off and Agenda", "speaker": "Joachim Foerderer & Sarah Nehring", "company": "HRGUG", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:00", "timeTo": "09:10", "description": "Opening session and conference agenda overview", "type": "keynote" },
-    "M1": { "id": "M1", "title": "Product Highlights #1: SAP SuccessFactors Roadmap and Vision", "speaker": "Bianka Woelke", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:10", "timeTo": "09:55", "description": "SAP SuccessFactors Roadmap and Vision", "type": "roadmap" },
-    "M2": { "id": "M2", "title": "HR Transformation @ Dekra", "speaker": "Verena Zais", "company": "Dekra", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:55", "timeTo": "10:40", "description": "Insights into HR Transformation at Dekra", "type": "customer-story" },
+    "M0": { "id": "M0", "title": "Kick-Off and Agenda", "speaker": "", "company": "HRGUG", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:00", "timeTo": "09:10", "description": "Opening session and conference agenda overview", "type": "keynote" },
+    "M1": { "id": "M1", "title": "Product Highlights #1: SAP SuccessFactors Roadmap and Vision", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:10", "timeTo": "09:55", "description": "SAP SuccessFactors Roadmap and Vision", "type": "roadmap" },
+    "M2": { "id": "M2", "title": "HR Transformation @ Dekra", "speaker": "", "company": "Dekra", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "09:55", "timeTo": "10:40", "description": "Insights into HR Transformation at Dekra", "type": "customer-story" },
     "BREAK1": { "id": "BREAK1", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "1st Floor Lobby Area", "date": "2026-03-11", "timeFrom": "10:40", "timeTo": "11:00", "description": "Coffee and networking break", "isBreak": true },
-    "M3": { "id": "M3", "title": "Product Highlights #2: SuccessFactors Employee Central Core - Roadmap", "speaker": "Tanja Bäck", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "11:00", "timeTo": "11:45", "description": "Explore the future vision and roadmap for SAP SuccessFactors Employee Central. Learn how upcoming innovations will boost HR productivity by empowering employees and managers and by optimizing and automating HR admin processes.", "type": "roadmap" },
-    "M4": { "id": "M4", "title": "Bosch's Journey Towards Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "speaker": "Sebastian May & Alexander Schatz", "company": "Bosch", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "11:45", "timeTo": "12:30", "description": "Bosch's Journey Toward Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "type": "customer-story" },
-    "M5": { "id": "M5", "title": "Callout your topic of interest & Introduction of new HRGUG members", "speaker": "Joachim Foerderer & Sarah Nehring", "company": "HRGUG", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "12:30", "timeTo": "13:00", "description": "Share your topics of interest and welcome new HRGUG members", "type": "keynote" },
+    "M3": { "id": "M3", "title": "Product Highlights #2: SuccessFactors Employee Central Core - Roadmap", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "11:00", "timeTo": "11:45", "description": "Explore the future vision and roadmap for SAP SuccessFactors Employee Central. Learn how upcoming innovations will boost HR productivity by empowering employees and managers and by optimizing and automating HR admin processes.", "type": "roadmap" },
+    "M4": { "id": "M4", "title": "Bosch's Journey Towards Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "speaker": "", "company": "Bosch", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "11:45", "timeTo": "12:30", "description": "Bosch's Journey Toward Implementing Employee Central in an Existing HCM and SuccessFactors Landscape", "type": "customer-story" },
+    "M5": { "id": "M5", "title": "Callout your topic of interest & Introduction of new HRGUG members", "speaker": "", "company": "HRGUG", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "12:30", "timeTo": "13:00", "description": "Share your topics of interest and welcome new HRGUG members", "type": "keynote" },
     "LUNCH1": { "id": "LUNCH1", "title": "🍽️ Lunch", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-11", "timeFrom": "13:00", "timeTo": "14:30", "description": "Lunch break", "isBreak": true },
-    "M6": { "id": "M6", "title": "Workforce Management: Roadmap and Vision", "speaker": "Stephanie Rhein", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "14:30", "timeTo": "15:10", "description": "Explore the future vision and roadmap for SAP SuccessFactors Workforce Management, covering absence management, time and attendance, workforce scheduling, and activity management. Learn how upcoming innovations will streamline leave processes, enhance productivity and compliance, optimize workforce scheduling, and enable activity-based time recording to improve operational efficiency and the employee experience.", "type": "roadmap" },
-    "M7": { "id": "M7", "title": "H4S4 - News and Roadmap of the S/4 HANA 2025 release", "speaker": "Nicole Schwalm & Michael Fruechtl", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "14:30", "timeTo": "15:10", "description": "Find out about the latest development in S/4 HANA HCM Private Cloud release 2025", "type": "roadmap" },
-    "M8": { "id": "M8", "title": "Unlocking Business Impact with AI Agents in SAP SuccessFactors", "speaker": "Gerald Reinhard", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "15:15", "timeTo": "15:55", "description": "Join us for an interactive customer session focused on exploring how AI Agents can transform SAP SuccessFactors HR Core. We'll start with the Data Quality Agent as a practical example and then broaden the discussion to identify additional high-impact use cases. The goal is to understand your biggest HR challenges, uncover opportunities where agentic AI can deliver measurable business value, and co-create ideas that drive efficiency, compliance, and employee experience. Your feedback will help shape the next generation of intelligent HR solutions.", "type": "roadmap" },
-    "M9": { "id": "M9", "title": "From Employee to Executive: Mastering Employee Attachments for Every Stakeholder", "speaker": "Sylvia Strangfeld", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "15:15", "timeTo": "15:55", "description": "Join us for an exclusive lab preview of our upcoming new digital Employee Attachment solution, developed directly from customer requests in our Customer Influence Tool. Currently, only IT administrators have access to attachments using the \"Manage Documents\" functionality that comes with very limited permission configuration options. The new foundational Employee Attachment functionality will provide the ability to list and filter all relevant personnel attachments for each employee, leveraging your existing permission structure and focusing on the specific document areas you define for different user roles. We'll demonstrate how our approach integrates into the new People Profile, creating an intuitive user experience that serves employees, managers, and HR professionals alike. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution.", "type": "technical" },
-    "M11": { "id": "M11", "title": "HCM Customer Evolution: Latest tools, assets, services and timelines for Core HR, Payroll and Time customers", "speaker": "Steve Schnoll, Wim Valstar, Duncan Scott", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "Learn about the latest tools, assets, services and deadlines for modernizing HCM, including: SAP Readiness Check for SAP SuccessFactors HCM, SAP HCM Migration Guide for HRIT Leaders (EvoGuide), SAP Migration tools and accelerators, HCM Evolution Kit Workshops, HCM Maintenance Timelines (also covers Payroll and Time solutions, in addition to Core HR listed in prior column)", "type": "technical" },
-    "M12": { "id": "M12", "title": "People Intelligence in SAP BDC", "speaker": "Nausheen Minaz Abdul Hameed", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "Roadmap, Delivered Data Products and Intelligent Apps, Demo the end to end flow, etc", "type": "roadmap" },
-    "M13": { "id": "M13", "title": "Workforce Scheduling Innovation Roundtable: Shaping the Future Together", "speaker": "Gayathri Raghu Raman", "company": "SAP", "room": "EG - DE.01A", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "An interactive customer discussion focused on emerging workforce scheduling challenges in producings industries and the future direction of SAP SuccessFactors Workforce Scheduling, featuring peer exchange, early insights, and direct dialogue with SAP product leaders.", "type": "roundtable" },
+    "M6": { "id": "M6", "title": "Workforce Management: Roadmap and Vision", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "14:30", "timeTo": "15:10", "description": "Explore the future vision and roadmap for SAP SuccessFactors Workforce Management, covering absence management, time and attendance, workforce scheduling, and activity management. Learn how upcoming innovations will streamline leave processes, enhance productivity and compliance, optimize workforce scheduling, and enable activity-based time recording to improve operational efficiency and the employee experience.", "type": "roadmap" },
+    "M7": { "id": "M7", "title": "H4S4 - News and Roadmap of the S/4 HANA 2025 release", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "14:30", "timeTo": "15:10", "description": "Find out about the latest development in S/4 HANA HCM Private Cloud release 2025", "type": "roadmap" },
+    "M8": { "id": "M8", "title": "Unlocking Business Impact with AI Agents in SAP SuccessFactors", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "15:15", "timeTo": "15:55", "description": "Join us for an interactive customer session focused on exploring how AI Agents can transform SAP SuccessFactors HR Core. We'll start with the Data Quality Agent as a practical example and then broaden the discussion to identify additional high-impact use cases. The goal is to understand your biggest HR challenges, uncover opportunities where agentic AI can deliver measurable business value, and co-create ideas that drive efficiency, compliance, and employee experience. Your feedback will help shape the next generation of intelligent HR solutions.", "type": "roadmap" },
+    "M9": { "id": "M9", "title": "From Employee to Executive: Mastering Employee Attachments for Every Stakeholder", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "15:15", "timeTo": "15:55", "description": "Join us for an exclusive lab preview of our upcoming new digital Employee Attachment solution, developed directly from customer requests in our Customer Influence Tool. Currently, only IT administrators have access to attachments using the \"Manage Documents\" functionality that comes with very limited permission configuration options. The new foundational Employee Attachment functionality will provide the ability to list and filter all relevant personnel attachments for each employee, leveraging your existing permission structure and focusing on the specific document areas you define for different user roles. We'll demonstrate how our approach integrates into the new People Profile, creating an intuitive user experience that serves employees, managers, and HR professionals alike. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution.", "type": "technical" },
+    "M11": { "id": "M11", "title": "HCM Customer Evolution: Latest tools, assets, services and timelines for Core HR, Payroll and Time customers", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "Learn about the latest tools, assets, services and deadlines for modernizing HCM, including: SAP Readiness Check for SAP SuccessFactors HCM, SAP HCM Migration Guide for HRIT Leaders (EvoGuide), SAP Migration tools and accelerators, HCM Evolution Kit Workshops, HCM Maintenance Timelines (also covers Payroll and Time solutions, in addition to Core HR listed in prior column)", "type": "technical" },
+    "M12": { "id": "M12", "title": "People Intelligence in SAP BDC", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "Roadmap, Delivered Data Products and Intelligent Apps, Demo the end to end flow, etc", "type": "roadmap" },
+    "M13": { "id": "M13", "title": "Workforce Scheduling Innovation Roundtable: Shaping the Future Together", "speaker": "", "company": "SAP", "room": "EG - DE.01A", "date": "2026-03-11", "timeFrom": "16:00", "timeTo": "16:40", "description": "An interactive customer discussion focused on emerging workforce scheduling challenges in producings industries and the future direction of SAP SuccessFactors Workforce Scheduling, featuring peer exchange, early insights, and direct dialogue with SAP product leaders.", "type": "roundtable" },
     "QA1": { "id": "QA1", "title": "💬 Q&A with Product Leadership", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-11", "timeFrom": "16:45", "timeTo": "17:30", "description": "Q&A session with product leadership", "isBreak": true },
     "SOCIAL1": { "id": "SOCIAL1", "title": "🛍️ Marketplace and Happy Hour", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-11", "timeFrom": "17:30", "timeTo": "19:00", "description": "Marketplace and Happy Hour - networking and exhibits", "isBreak": true },
     "DINNER1": { "id": "DINNER1", "title": "🍴 Dinner in Rot03 Canteen", "speaker": "", "company": "", "room": "Rot03 Canteen", "date": "2026-03-11", "timeFrom": "19:00", "timeTo": "22:00", "description": "Conference dinner", "isBreak": true },
-    "D1": { "id": "D1", "title": "Product highlight #4: SAP SuccessFactors Career and Talent Development: Build a future-ready workforce - Roadmap & Vision", "speaker": "Martina Willam", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "08:15", "timeTo": "09:00", "description": "Learn about our product vision and strategy for building a future-ready workforce with SAP SuccessFactors Career and Talent Development. Discover how AI-driven innovations enhance upskilling, personalized career development and skill-based talent planning to fuel people and organizational growth and agility.", "type": "roadmap" },
-    "D2": { "id": "D2", "title": "SuccessFactors Skill Management with Talent Intelligence Hub @ BASF", "speaker": "Andrea Schulz", "company": "BASF", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "09:00", "timeTo": "09:45", "description": "SuccessFactors Skill Management with Talent Intelligence Hub at BASF", "type": "customer-story" },
+    "D1": { "id": "D1", "title": "Product highlight #4: SAP SuccessFactors Career and Talent Development: Build a future-ready workforce - Roadmap & Vision", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "08:15", "timeTo": "09:00", "description": "Learn about our product vision and strategy for building a future-ready workforce with SAP SuccessFactors Career and Talent Development. Discover how AI-driven innovations enhance upskilling, personalized career development and skill-based talent planning to fuel people and organizational growth and agility.", "type": "roadmap" },
+    "D2": { "id": "D2", "title": "SuccessFactors Skill Management with Talent Intelligence Hub @ BASF", "speaker": "", "company": "BASF", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "09:00", "timeTo": "09:45", "description": "SuccessFactors Skill Management with Talent Intelligence Hub at BASF", "type": "customer-story" },
     "BREAK2": { "id": "BREAK2", "title": "☕ Coffee Break", "speaker": "", "company": "", "room": "1st Floor Lobby Area", "date": "2026-03-12", "timeFrom": "09:45", "timeTo": "10:00", "description": "Coffee and networking break", "isBreak": true },
-    "D3": { "id": "D3", "title": "Product Highlights #5: Payroll Roadmap", "speaker": "Judith Hochwarth", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:00", "timeTo": "10:45", "description": "Roadmap of Employee Central Payroll (including Private Cloud Edition)", "type": "roadmap" },
+    "D3": { "id": "D3", "title": "Product Highlights #5: Payroll Roadmap", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:00", "timeTo": "10:45", "description": "Roadmap of Employee Central Payroll (including Private Cloud Edition)", "type": "roadmap" },
     "MARKETPLACE2": { "id": "MARKETPLACE2", "title": "🛍️ Marketplace", "speaker": "", "company": "", "room": "Marketplace Area", "date": "2026-03-12", "timeFrom": "10:00", "timeTo": "12:00", "description": "Visit exhibitor booths and network with partners", "isBreak": true },
-    "D4": { "id": "D4", "title": "From OnPrem to the Cloud: Clariant's HCM Transformation Journey (EC Payroll)", "speaker": "Jens Gehlen", "company": "Clariant", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:45", "timeTo": "11:30", "description": "Insights into Employee Central Pay experience at Clariant", "type": "customer-story" },
-    "D5": { "id": "D5", "title": "Product highlight #6: SAP SuccessFactors AI Roadmap session", "speaker": "Gerald Reinhard", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "11:30", "timeTo": "12:15", "description": "SAP SuccessFactors AI Roadmap", "type": "roadmap" },
-    "D6": { "id": "D6", "title": "Extensibility Scenarios with Extensibility Wizard and SAP BTP", "speaker": "Peter Stock", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "12:20", "timeTo": "13:00", "description": "Learn about extensibility capabilities provided for your SuccessFactors solution in conjunction with SAP Build Extensibility Wizard and SAP BTP. Three scenarios enabled by the Extensibility Wizard will be covered: 1) In-App Field Extensibility in EC and MDF, 2) Side-by-Side Process Extensibility in Onboarding, 3) Latest People Profile Extensibility with UI integration cards extending people profile with data from SAP BTP-based applications", "type": "technical" },
-    "D7": { "id": "D7", "title": "Globalization: Recent & upcoming Roadmap / Teaser Parenthood", "speaker": "Shruti Shukla & Torsten Nagel", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "12:20", "timeTo": "13:00", "description": "Get a fast-paced look at the top 2025 innovations—from the new §3B feature and transparent payroll experiences to smarter enrollment for allowances and reimbursements. We'll also give you a first glimpse into the 2026 roadmap, including reverse absence replication for Germany, automatic holiday generation, enhanced BDC reporting, and new parenthood capabilities. This session is perfect for experts who want to stay ahead of the latest and upcoming developments.", "type": "roadmap" },
+    "D4": { "id": "D4", "title": "From OnPrem to the Cloud: Clariant's HCM Transformation Journey (EC Payroll)", "speaker": "", "company": "Clariant", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "10:45", "timeTo": "11:30", "description": "Insights into Employee Central Pay experience at Clariant", "type": "customer-story" },
+    "D5": { "id": "D5", "title": "Product highlight #6: SAP SuccessFactors AI Roadmap session", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "11:30", "timeTo": "12:15", "description": "SAP SuccessFactors AI Roadmap", "type": "roadmap" },
+    "D6": { "id": "D6", "title": "Extensibility Scenarios with Extensibility Wizard and SAP BTP", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "12:20", "timeTo": "13:00", "description": "Learn about extensibility capabilities provided for your SuccessFactors solution in conjunction with SAP Build Extensibility Wizard and SAP BTP. Three scenarios enabled by the Extensibility Wizard will be covered: 1) In-App Field Extensibility in EC and MDF, 2) Side-by-Side Process Extensibility in Onboarding, 3) Latest People Profile Extensibility with UI integration cards extending people profile with data from SAP BTP-based applications", "type": "technical" },
+    "D7": { "id": "D7", "title": "Globalization: Recent & upcoming Roadmap / Teaser Parenthood", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "12:20", "timeTo": "13:00", "description": "Get a fast-paced look at the top 2025 innovations—from the new §3B feature and transparent payroll experiences to smarter enrollment for allowances and reimbursements. We'll also give you a first glimpse into the 2026 roadmap, including reverse absence replication for Germany, automatic holiday generation, enhanced BDC reporting, and new parenthood capabilities. This session is perfect for experts who want to stay ahead of the latest and upcoming developments.", "type": "roadmap" },
     "LUNCH2": { "id": "LUNCH2", "title": "🍽️ Lunch", "speaker": "", "company": "", "room": "All Areas", "date": "2026-03-12", "timeFrom": "13:00", "timeTo": "14:00", "description": "Lunch break", "isBreak": true },
-    "D8": { "id": "D8", "title": "The future of Succession Planning - Roadmap and Vision for AI-driven Talent Planning", "speaker": "Beibei Hu", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "14:00", "timeTo": "14:40", "description": "Discover how AI is redefining the future of talent planning. This session highlights how the Succession Agent strengthens leadership pipelines through continuous health diagnostics and targeted strategic recommendations, while the Talent Scout Agent uses conversational AI to instantly surface the right talent—matching candidates to roles, successors, talent pools, and experts with transparent, data-driven insights. Together, these AI agents empower organizations to make faster, smarter, and more confident talent decisions.", "type": "roadmap" },
-    "D9": { "id": "D9", "title": "Building Autonomous Payroll: Cutting cost in Payroll with Payroll Agents", "speaker": "Pepijn Visser, Michael Wulf", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "14:00", "timeTo": "14:40", "description": "AI has been around for a long time but not always the high expectations are met. In this session we demonstrate how Payroll Agents in EC Payroll cut costs in your organization. We look at a concrete customer example and also look into the roadmap of Payroll Agents for EC Payroll.", "type": "technical" },
-    "D10": { "id": "D10", "title": "Talent Intelligence Hub: Accelerating your skills journey", "speaker": "Sharath Sundar, Amelie Fidric", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Are you planning to implement Talent Intelligence Hub? Are you in the process of creating or updating your job architecture? This session will give you practical tips on getting started. We'll discuss various implementation scenarios and governance best practices.", "type": "technical" },
-    "D11": { "id": "D11", "title": "From Tedious to Transformative: Reimagining Admin Experiences with AI", "speaker": "Hariprasad Gudivada", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Discover how AI is revolutionizing administrative workflows, transforming time-consuming manual tasks into intelligent, automated experiences that empower your team to focus on strategic work that drives business value.", "type": "technical" },
-    "D12": { "id": "D12", "title": "Globalization: Parenthood Roundtable - Together we shape what's next", "speaker": "Shruti Shukla & Torsten Nagel", "company": "SAP", "room": "EG - DE.01A", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Bring in your ideas and help us shape what's next. An interactive round table discussion focused on how organizations can deliver a seamless, compliant, and supportive parenthood experience—covering maternity, paternity, and parental leave—across the full SAP landscape. In this session, we present the future vision of the end-to-end process from Employee Central (EC) through to Employee Central Payroll (ECP), including absence management, document workflows, payroll impacts and country-specific considerations.", "type": "roundtable" },
-    "D13": { "id": "D13", "title": "Talent Intelligence Hub: From Skill Governance to Value Realization", "speaker": "Sharath Sundar, Amelie Fidric", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "15:30", "timeTo": "16:10", "description": "This session shows how a centralized Talent Intelligence Hub turns governed skills data into measurable business value. We'll explain a pragmatic governance framework for defining, standardizing, and maintaining skill taxonomies; the data and integration foundations needed to create a single source of truth; and the analytics and workflows that translate that foundation into better hiring, internal mobility, learning investments, and workforce planning. Attendees will see concrete examples and a practical roadmap: establishing governance roles and policies, mapping skills to roles and career paths, instrumenting data quality and building value-focused dashboards and use cases.", "type": "technical" },
-    "D14": { "id": "D14", "title": "Event Driven Integration: Roadmap and Vision", "speaker": "Aditya Singh Kushwah", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "15:30", "timeTo": "16:10", "description": "Learn about our product vision and strategy for building event driven integrations between SAP SuccessFactors with SAP and Third Party Applications. Discover innovations in Integration area and event transfer capabilities. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution.", "type": "technical" },
+    "D8": { "id": "D8", "title": "The future of Succession Planning - Roadmap and Vision for AI-driven Talent Planning", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "14:00", "timeTo": "14:40", "description": "Discover how AI is redefining the future of talent planning. This session highlights how the Succession Agent strengthens leadership pipelines through continuous health diagnostics and targeted strategic recommendations, while the Talent Scout Agent uses conversational AI to instantly surface the right talent—matching candidates to roles, successors, talent pools, and experts with transparent, data-driven insights. Together, these AI agents empower organizations to make faster, smarter, and more confident talent decisions.", "type": "roadmap" },
+    "D9": { "id": "D9", "title": "Building Autonomous Payroll: Cutting cost in Payroll with Payroll Agents", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "14:00", "timeTo": "14:40", "description": "AI has been around for a long time but not always the high expectations are met. In this session we demonstrate how Payroll Agents in EC Payroll cut costs in your organization. We look at a concrete customer example and also look into the roadmap of Payroll Agents for EC Payroll.", "type": "technical" },
+    "D10": { "id": "D10", "title": "Talent Intelligence Hub: Accelerating your skills journey", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Are you planning to implement Talent Intelligence Hub? Are you in the process of creating or updating your job architecture? This session will give you practical tips on getting started. We'll discuss various implementation scenarios and governance best practices.", "type": "technical" },
+    "D11": { "id": "D11", "title": "From Tedious to Transformative: Reimagining Admin Experiences with AI", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Discover how AI is revolutionizing administrative workflows, transforming time-consuming manual tasks into intelligent, automated experiences that empower your team to focus on strategic work that drives business value.", "type": "technical" },
+    "D12": { "id": "D12", "title": "Globalization: Parenthood Roundtable - Together we shape what's next", "speaker": "", "company": "SAP", "room": "EG - DE.01A", "date": "2026-03-12", "timeFrom": "14:45", "timeTo": "15:25", "description": "Bring in your ideas and help us shape what's next. An interactive round table discussion focused on how organizations can deliver a seamless, compliant, and supportive parenthood experience—covering maternity, paternity, and parental leave—across the full SAP landscape. In this session, we present the future vision of the end-to-end process from Employee Central (EC) through to Employee Central Payroll (ECP), including absence management, document workflows, payroll impacts and country-specific considerations.", "type": "roundtable" },
+    "D13": { "id": "D13", "title": "Talent Intelligence Hub: From Skill Governance to Value Realization", "speaker": "", "company": "SAP", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "15:30", "timeTo": "16:10", "description": "This session shows how a centralized Talent Intelligence Hub turns governed skills data into measurable business value. We'll explain a pragmatic governance framework for defining, standardizing, and maintaining skill taxonomies; the data and integration foundations needed to create a single source of truth; and the analytics and workflows that translate that foundation into better hiring, internal mobility, learning investments, and workforce planning. Attendees will see concrete examples and a practical roadmap: establishing governance roles and policies, mapping skills to roles and career paths, instrumenting data quality and building value-focused dashboards and use cases.", "type": "technical" },
+    "D14": { "id": "D14", "title": "Event Driven Integration: Roadmap and Vision", "speaker": "", "company": "SAP", "room": "W3", "date": "2026-03-12", "timeFrom": "15:30", "timeTo": "16:10", "description": "Learn about our product vision and strategy for building event driven integrations between SAP SuccessFactors with SAP and Third Party Applications. Discover innovations in Integration area and event transfer capabilities. This interactive session will showcase the planned functionality and gather your valuable input to shape the final solution.", "type": "technical" },
     "CLOSING": { "id": "CLOSING", "title": "🎯 Wrap up and closing", "speaker": "", "company": "", "room": "W1+W2", "date": "2026-03-12", "timeFrom": "16:15", "timeTo": "16:30", "description": "Conference wrap up and closing remarks", "isBreak": true }
 };
 
@@ -1894,7 +1827,11 @@ function isFavorited(sessionId) {
 }
 
 function updateFavoritesCount() {
-    document.getElementById('favorites-count').textContent = favorites.length;
+    // Favorites feature disabled - function kept for compatibility
+    const favCountElement = document.getElementById('favorites-count');
+    if (favCountElement) {
+        favCountElement.textContent = favorites.length;
+    }
 }
 
 function isSessionFinished(session) {
@@ -2382,12 +2319,23 @@ function populateAgenda() {
 
     if (totalSessions === 0) {
         day1Morning.style.display = 'block';
-        day1Morning.innerHTML = `
-            <div class="empty-state">
-                <h3>${currentView === 'favorites' ? '⭐ No sessions in your agenda yet' : '🔍 No sessions match your search'}</h3>
-                <p>${currentView === 'favorites' ? 'Click the star on any session to add it to your agenda.' : 'Try adjusting your search terms or filters.'}</p>
-            </div>
-        `;
+        if (currentView === 'current') {
+            // For "Current & Upcoming" view when event is over
+            day1Morning.innerHTML = `
+                <div class="empty-state">
+                    <h3>✅ All sessions have concluded</h3>
+                    <p>Click "📋 All Sessions" to view the complete conference schedule.</p>
+                </div>
+            `;
+        } else {
+            // For other views (shouldn't normally happen with search disabled)
+            day1Morning.innerHTML = `
+                <div class="empty-state">
+                    <h3>No sessions to display</h3>
+                    <p>Please select a different view.</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -2417,7 +2365,6 @@ function setView(view) {
     // Update buttons
     document.getElementById('btn-current').classList.toggle('active', view === 'current');
     document.getElementById('btn-all').classList.toggle('active', view === 'all');
-    document.getElementById('btn-favorites').classList.toggle('active', view === 'favorites');
 
     // Hide detail view, show agenda
     document.getElementById('session-detail-view').style.display = 'none';
@@ -2487,10 +2434,6 @@ function showSessionDetail(sessionId) {
                 <button class="add-to-calendar-btn" onclick="downloadICS(sessionsData['${session.id}'])">
                     📅 Add to Calendar
                 </button>
-                <button class="add-to-calendar-btn" style="background: ${favorited ? '#dc3545' : 'linear-gradient(135deg, var(--sap-gold) 0%, var(--sap-gold-dark) 100%)'}"
-                        onclick="toggleFavorite('${session.id}'); showSessionDetail('${session.id}');">
-                    ${favorited ? '★ Remove from Agenda' : '☆ Add to My Agenda'}
-                </button>
                 <button class="share-btn" onclick="shareSession(sessionsData['${session.id}'])">
                     🔗 Share Session
                 </button>
@@ -2513,82 +2456,30 @@ function hideSessionDetail() {
 function clearSearch() {
     const searchInput = document.getElementById('search-input');
     const clearBtn = document.getElementById('search-clear');
-    searchInput.value = '';
-    searchTerm = '';
-    clearBtn.classList.remove('visible');
-    populateAgenda();
-    searchInput.focus();
+    if (searchInput && clearBtn) {
+        searchInput.value = '';
+        searchTerm = '';
+        clearBtn.classList.remove('visible');
+        populateAgenda();
+        searchInput.focus();
+    }
 }
 
 function updateSearchClearButton() {
     const searchInput = document.getElementById('search-input');
     const clearBtn = document.getElementById('search-clear');
-    if (searchInput.value.length > 0) {
-        clearBtn.classList.add('visible');
-    } else {
-        clearBtn.classList.remove('visible');
-    }
-}
-
-// ============================================
-// KIOSK MODE - For Big Monitor Display
-// ============================================
-let kioskMode = false;
-let kioskScrollInterval = null;
-
-function toggleKioskMode() {
-    kioskMode = !kioskMode;
-    const body = document.body;
-    const kioskBtn = document.getElementById('kiosk-btn');
-
-    if (kioskMode) {
-        body.classList.add('kiosk-mode');
-        kioskBtn.textContent = '❌ Exit Kiosk';
-        kioskBtn.style.background = '#dc3545';
-        kioskBtn.style.color = 'white';
-
-        // Add floating exit button
-        const exitBtn = document.createElement('button');
-        exitBtn.id = 'kiosk-exit-floating';
-        exitBtn.className = 'kiosk-exit-btn';
-        exitBtn.textContent = '❌ Exit Kiosk Mode';
-        exitBtn.onclick = toggleKioskMode;
-        document.body.appendChild(exitBtn);
-
-        // Start auto-scroll every 30 seconds
-        kioskScrollInterval = setInterval(() => {
-            const currentSlot = document.getElementById('current-time-slot');
-            if (currentSlot) {
-                currentSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 30000);
-
-        // Immediate scroll to current
-        setTimeout(() => {
-            const currentSlot = document.getElementById('current-time-slot');
-            if (currentSlot) {
-                currentSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 300);
-
-    } else {
-        body.classList.remove('kiosk-mode');
-        kioskBtn.textContent = '🖥️ Kiosk Mode';
-        kioskBtn.style.background = '';
-        kioskBtn.style.color = '';
-
-        // Remove floating exit button
-        const exitBtn = document.getElementById('kiosk-exit-floating');
-        if (exitBtn) exitBtn.remove();
-
-        // Stop auto-scroll
-        if (kioskScrollInterval) {
-            clearInterval(kioskScrollInterval);
-            kioskScrollInterval = null;
+    if (searchInput && clearBtn) {
+        if (searchInput.value.length > 0) {
+            clearBtn.classList.add('visible');
+        } else {
+            clearBtn.classList.remove('visible');
         }
     }
 }
 
+// ============================================
+// ROOM INFO MODAL
+// ============================================
 function showRoomInfo() {
     document.getElementById('room-modal').classList.add('active');
 }
@@ -2621,20 +2512,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 500);
 
-    // Search input handler
+    // Search input handler (disabled - search feature hidden)
     const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', (e) => {
-        searchTerm = e.target.value;
-        updateSearchClearButton();
-        populateAgenda();
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            updateSearchClearButton();
+            populateAgenda();
+        });
 
-    // ESC to clear search
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            clearSearch();
-        }
-    });
+        // ESC to clear search
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                clearSearch();
+            }
+        });
+    }
 
     // Close modal on outside click
     document.getElementById('room-modal').addEventListener('click', (e) => {
