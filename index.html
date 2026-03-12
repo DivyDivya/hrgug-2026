@@ -34,6 +34,19 @@
     --shadow-lg: 0 8px 32px rgba(53, 74, 95, 0.2);
 }
 
+/* Visually hidden but accessible to screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 body {
     font-family: '72', 'SAP-icons', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(135deg, var(--sap-dark-blue) 0%, var(--sap-dark-blue-deep) 100%);
@@ -1580,7 +1593,8 @@ body.kiosk-mode .timeline-card {
                 <div class="search-filter-row">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="search-input" placeholder="Search sessions, speakers, or topics...">
+                        <label for="search-input" class="visually-hidden">Search sessions</label>
+                        <input type="text" id="search-input" placeholder="Search sessions, speakers, or topics..." aria-label="Search sessions, speakers, or topics">
                         <button class="search-clear-btn" id="search-clear" onclick="clearSearch()">×</button>
                     </div>
                     <button class="filter-toggle-btn" id="filter-toggle" onclick="toggleFilterPanel()">
@@ -1594,7 +1608,8 @@ body.kiosk-mode .timeline-card {
 
                 <div class="view-actions-row">
                     <div class="view-toggle-group">
-                        <button class="view-toggle-btn active" id="btn-all" onclick="setView('all')">📋 All Sessions</button>
+                        <button class="view-toggle-btn active" id="btn-current" onclick="setView('current')">⏰ Current & Upcoming</button>
+                        <button class="view-toggle-btn" id="btn-all" onclick="setView('all')">📋 All Sessions</button>
                         <button class="view-toggle-btn" id="btn-favorites" onclick="setView('favorites')">⭐ My Agenda (<span id="favorites-count">0</span>)</button>
                     </div>
                     <div class="actions-group">
@@ -1850,7 +1865,7 @@ function updateFilters() {
 // STATE MANAGEMENT
 // ============================================
 let favorites = JSON.parse(localStorage.getItem('hrgug-favorites') || '[]');
-let currentView = 'all';
+let currentView = 'current';
 let currentFilter = 'all';
 let searchTerm = '';
 
@@ -2312,7 +2327,10 @@ function populateAgenda() {
 
     // Apply filters
     allSessions = allSessions.filter(s => {
-        // Apply view filter (all or favorites)
+        // Apply view filter (current, all, or favorites)
+        if (currentView === 'current' && isSessionFinished(s)) {
+            return false;
+        }
         if (currentView === 'favorites' && !s.isBreak && !isFavorited(s.id)) {
             return false;
         }
@@ -2397,6 +2415,7 @@ function setView(view) {
     currentView = view;
 
     // Update buttons
+    document.getElementById('btn-current').classList.toggle('active', view === 'current');
     document.getElementById('btn-all').classList.toggle('active', view === 'all');
     document.getElementById('btn-favorites').classList.toggle('active', view === 'favorites');
 
