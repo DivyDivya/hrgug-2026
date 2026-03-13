@@ -1546,7 +1546,7 @@ main {
                         <button class="view-toggle-btn active" id="btn-current" onclick="setView('current')">⏰ Current & Upcoming</button>
                         <button class="view-toggle-btn" id="btn-all" onclick="setView('all')">📋 All Sessions</button>
                     </div>
-                    <div class="actions-group">
+                    <div class="actions-group" style="display: none;">
                         <button class="action-btn" onclick="exportAllToCalendar()">📅 Export All</button>
                     </div>
                 </div>
@@ -1580,7 +1580,7 @@ main {
                 </div>
             </div>
 
-            <div class="room-legend">
+            <div class="room-legend" style="display: none;">
                 <div class="legend-item" onclick="showRoomInfo()">
                     <span class="legend-color" style="background-color: #4A90E2;"></span>
                     <span>W1+W2 - 1st Floor</span>
@@ -2118,11 +2118,13 @@ function copyToClipboard(text) {
 
 function createSessionCard(session) {
     const card = document.createElement('div');
-    const finished = !session.isBreak && isSessionFinished(session);
+    const finished = isSessionFinished(session);
     const happeningNow = isSessionHappeningNow(session);
     const favorited = !session.isBreak && isFavorited(session.id);
 
-    if (session.isBreak) {
+    if (session.isBreak && finished) {
+        card.className = 'timeline-card break-card finished';
+    } else if (session.isBreak) {
         card.className = 'timeline-card break-card';
     } else if (finished) {
         card.className = 'timeline-card finished';
@@ -2132,11 +2134,14 @@ function createSessionCard(session) {
         if (favorited) card.classList.add('favorited');
     }
 
-    if (!session.isBreak) {
+    if (!session.isBreak && !finished) {
         card.style.borderTopColor = getRoomColor(session.room);
         // Add click handler for session detail view
         card.style.cursor = 'pointer';
         card.onclick = () => showSessionDetail(session.id);
+    } else if (!session.isBreak && finished) {
+        card.style.borderTopColor = getRoomColor(session.room);
+        card.style.cursor = 'default';
     }
 
     if (session.isBreak) {
@@ -2160,7 +2165,6 @@ function createSessionCard(session) {
             <div class="session-header">
                 <span class="session-id">${session.id}</span>
                 <div class="session-header-right">
-                    <span class="session-room" style="background-color: ${getRoomColor(session.room)}">${session.room}</span>
                     <button class="favorite-btn ${favorited ? 'favorited' : ''}"
                             onclick="event.stopPropagation(); toggleFavorite('${session.id}')"
                             title="${favorited ? 'Remove from agenda' : 'Add to agenda'}">
@@ -2179,7 +2183,7 @@ function createSessionCard(session) {
             </div>
             <div class="session-company">${session.company}</div>
             ${conflictHTML}
-            ${getCalendarThumbnail(session)}
+            ${!finished ? getCalendarThumbnail(session) : ''}
         `;
     }
     return card;
@@ -2389,7 +2393,6 @@ function showSessionDetail(sessionId) {
         <div class="session-detail-card">
             <div class="detail-header">
                 <span class="session-id-large">${session.id}</span>
-                <span class="session-room-large" style="background-color: ${getRoomColor(session.room)}">${session.room}</span>
             </div>
             <h1 class="detail-title">${session.title}</h1>
 
@@ -2414,13 +2417,6 @@ function showSessionDetail(sessionId) {
                     <div class="info-content">
                         <strong>Company</strong>
                         <p>${session.company}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <span class="info-icon">📍</span>
-                    <div class="info-content">
-                        <strong>Room</strong>
-                        <p>${session.room}</p>
                     </div>
                 </div>
             </div>
