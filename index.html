@@ -879,6 +879,39 @@ main {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid var(--sap-blue);
+    animation: calendarPulse 3s ease-in-out infinite;
+}
+
+@keyframes calendarPulse {
+    0%, 100% {
+        box-shadow: 0 3px 12px rgba(0, 112, 242, 0.3);
+    }
+    50% {
+        box-shadow: 0 3px 18px rgba(0, 112, 242, 0.5), 0 0 0 3px rgba(0, 112, 242, 0.1);
+    }
+}
+
+.calendar-thumbnail::after {
+    content: "Add to calendar";
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--sap-dark-blue-deep);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, bottom 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-thumbnail:hover::after {
+    opacity: 1;
+    bottom: -32px;
 }
 
 .calendar-thumbnail:hover {
@@ -996,7 +1029,6 @@ main {
     transition: all 0.3s ease;
     padding: 0.25rem;
     line-height: 1;
-    display: none; /* Hidden - My Agenda feature disabled */
 }
 
 .favorite-btn:hover {
@@ -1525,7 +1557,7 @@ main {
 
             <!-- Control Bar -->
             <div class="control-bar">
-                <div class="search-filter-row">
+                <div class="search-filter-row" style="display: none;">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
                         <label for="search-input" class="visually-hidden">Search sessions</label>
@@ -1539,12 +1571,13 @@ main {
 
                 <div id="active-filters" class="active-filters"></div>
 
-                <div class="divider"></div>
+                <div class="divider" style="display: none;"></div>
 
                 <div class="view-actions-row">
                     <div class="view-toggle-group">
                         <button class="view-toggle-btn active" id="btn-current" onclick="setView('current')">⏰ Current & Upcoming</button>
                         <button class="view-toggle-btn" id="btn-all" onclick="setView('all')">📋 All Sessions</button>
+                        <button class="view-toggle-btn" id="btn-favorites" onclick="setView('favorites')">⭐ My Agenda</button>
                     </div>
                     <div class="actions-group" style="display: none;">
                         <button class="action-btn" onclick="exportAllToCalendar()">📅 Export All</button>
@@ -1568,7 +1601,7 @@ main {
                             <span class="filter-option" data-type="day" data-filter="day2" onclick="selectFilter(this)">Thursday</span>
                         </div>
                     </div>
-                    <div class="filter-group">
+                    <div class="filter-group" style="display: none;">
                         <label class="filter-group-label">📍 Room</label>
                         <div class="filter-options">
                             <span class="filter-option active" data-type="room" data-filter="all" onclick="selectFilter(this)">All Rooms</span>
@@ -2075,7 +2108,7 @@ function getCalendarThumbnail(session, large = false) {
     const sizeClass = large ? 'calendar-thumbnail-large' : 'calendar-thumbnail';
 
     return `
-        <div class="${sizeClass}" onclick="event.stopPropagation(); downloadICS(sessionsData['${session.id}'])" title="Download to calendar">
+        <div class="${sizeClass}" onclick="event.stopPropagation(); downloadICS(sessionsData['${session.id}'])" title="Add to calendar">
             <div class="calendar-thumbnail-icon">📥</div>
             <div class="calendar-thumbnail-header">${month}</div>
             <div class="calendar-thumbnail-body">
@@ -2183,7 +2216,7 @@ function createSessionCard(session) {
             </div>
             <div class="session-company">${session.company}</div>
             ${conflictHTML}
-            ${!finished ? getCalendarThumbnail(session) : ''}
+            ${getCalendarThumbnail(session)}
         `;
     }
     return card;
@@ -2369,6 +2402,7 @@ function setView(view) {
     // Update buttons
     document.getElementById('btn-current').classList.toggle('active', view === 'current');
     document.getElementById('btn-all').classList.toggle('active', view === 'all');
+    document.getElementById('btn-favorites').classList.toggle('active', view === 'favorites');
 
     // Hide detail view, show agenda
     document.getElementById('session-detail-view').style.display = 'none';
@@ -2434,6 +2468,9 @@ function showSessionDetail(sessionId) {
                     🔗 Share Session
                 </button>
             </div>
+            <p style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-secondary); font-style: italic;">
+                💡 Download .ics file for Outlook, Google Calendar, Apple Calendar
+            </p>
         </div>
     `;
 
